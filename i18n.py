@@ -1,0 +1,145 @@
+import streamlit as st
+
+# key: (عربي، English)
+S = {
+    # تنقل
+    "dash": ("لوحة التحكم", "Dashboard"), "members": ("سجل الأعضاء", "Member Registry"),
+    "requests": ("متابعة الطلبات", "Requests"), "policies": ("وثائق التأمين", "Policies"),
+    "scanner": ("المسح الذكي", "Smart Scanner"), "import": ("مركز التصدير", "Export Center"),
+    "settings": ("الإعدادات", "Settings"), "tagline": ("Global Medical", "Global Medical"),
+    # عام
+    "all": ("الكل", "All"), "search": ("بحث", "Search"), "save": ("حفظ", "Save"), "saved": ("تم الحفظ", "Saved"),
+    "nothing": ("لا توجد بيانات", "No data"), "readonly": ("حسابك للعرض فقط.", "Your account is read-only."),
+    "logout": ("خروج", "Logout"), "demo": ("وضع تجريبي: البيانات مؤقتة", "Demo mode: data is temporary"),
+    "action": ("الإجراء", "Action"),
+    # دخول
+    "login": ("دخول", "Login"), "role": ("الصلاحية", "Role"), "admin": ("مدير", "Admin"), "viewer": ("عرض فقط", "Viewer"),
+    "user_name": ("اسمك (بيظهر في الإشعارات)", "Your name (shown in notifications)"),
+    "pw": ("كلمة المرور", "Password"), "bad_pw": ("كلمة المرور غير صحيحة", "Wrong password"),
+    "no_secrets": ("الدخول متوقف: أضف ADMIN_PASSWORD (و VIEWER_PASSWORD اختياري) في Secrets.",
+                   "Login disabled: add ADMIN_PASSWORD (and optionally VIEWER_PASSWORD) to Secrets."),
+    # لوحة التحكم
+    "welcome": ("Myshurance", "Myshurance"), "welcome_sub": ("إدارة وثائق Allianz", "Allianz policy administration"),
+    "m_active": ("أعضاء نشطين", "Active members"), "m_open": ("طلبات مفتوحة", "Open requests"),
+    "m_done": ("طلبات منفّذة", "Completed requests"), "m_term": ("تم إنهاء عضويتهم", "Terminated"),
+    "drafts_alert": ("عندك {n} طلب مسودة لسه ما اتبعتوش. اطلع ملف الإضافة/الحذف من مركز التصدير.",
+                     "You have {n} draft request(s) not sent yet. Generate the add/delete file from Export Center."),
+    "recent": ("آخر الطلبات", "Recent requests"), "per_policy": ("الأعضاء لكل وثيقة", "Members per policy"),
+    # وثائق
+    "pol_active": ("نشطة وسارية", "Active"), "pol_expired": ("منتهية", "Expired"),
+    "pol_provider": ("شركة التأمين", "Insurer"), "pol_start": ("بداية الوثيقة", "Start"),
+    "pol_end": ("نهاية الوثيقة", "End"), "pol_open": ("طلبات مفتوحة", "Open requests"),
+    "pol_edit": ("تعديل التواريخ", "Edit dates"),
+    # أعضاء
+    "flt_policy": ("الوثيقة", "Policy"), "flt_cat": ("الفئة", "Tier"), "flt_status": ("الحالة", "Status"),
+    "n_total": ("إجمالي السجلات", "Total records"), "n_active": ("نشط", "Active"), "n_term": ("تم إنهاء العضوية", "Terminated"),
+    "f_tier": ("فئة", "Tier"), "export_view": ("تصدير الجدول (Excel)", "Export table (Excel)"),
+    "c_idx": ("#", "#"), "c_name": ("الاسم الكامل", "Full name"), "c_staff": ("الرقم الوظيفي (Staff Number)", "Staff Number"),
+    "c_card": ("رقم كارت التأمين", "Card number"), "c_policy": ("رقم الوثيقة", "Policy no."),
+    "c_company": ("اسم العقد / الشركة", "Contract / Company"), "c_cat": ("الفئة", "Tier"),
+    "c_dep": ("نوع العضو (Dependency)", "Dependency"), "c_dob": ("تاريخ الميلاد", "Date of birth"),
+    "c_gender": ("النوع", "Gender"), "c_start": ("تاريخ السريان بالمصدر", "Source start date"),
+    "c_end": ("تاريخ الانتهاء بالمصدر", "Source end date"), "c_mstatus": ("حالة العضوية", "Membership status"),
+    "c_delreq": ("حالة طلب الحذف", "Deletion request"), "no_req": ("لا يوجد طلب", "No request"),
+    "ms_active": ("نشط (ساري)", "Active"), "ms_terminated": ("تم إنهاء العضوية", "Terminated"),
+    "g_M": ("ذكر", "Male"), "g_F": ("أنثى", "Female"),
+    "tab_add": ("طلب إضافة عضو", "Add member request"), "tab_act": ("حذف / بدل فاقد", "Delete / Replacement"),
+    "f_nid": ("الرقم القومي", "National ID"), "f_phone": ("الموبايل", "Phone"), "f_eff": ("تاريخ الإضافة", "Addition date"),
+    "f_details": ("ملاحظات", "Notes"), "f_reason": ("السبب", "Reason"),
+    "submit_add": ("إنشاء طلب إضافة", "Create add request"), "submit_req": ("إنشاء الطلب", "Create request"),
+    "choose_member": ("اختر العضو", "Select member"), "act_delete": ("حذف", "Delete"), "act_replace": ("بدل فاقد", "Replacement"),
+    "reason_lost": ("فقد", "Lost"), "reason_damaged": ("تلف", "Damaged"),
+    "del_date": ("تاريخ الحذف", "Deletion date"), "damaged_img": ("صورة الكارت", "Card image"),
+    "confirm_ck": ("أؤكد البيانات", "I confirm the details"),
+    "ok_req": ("تم إنشاء الطلب {ref} (مسودة)", "Request {ref} created (draft)"),
+    # مسح ذكي
+    "scan_nid": ("البطاقة الشخصية", "National ID card"), "scan_card": ("كارنيه التأمين (اختياري)", "Insurance card (optional)"),
+    "scan_read": ("قراءة المستندات", "Read documents"), "scan_reading": ("جاري القراءة...", "Reading..."),
+    "scan_privacy": ("القراءة بالذكاء الاصطناعي: الصور بتتبعت لـ Anthropic عشان تتقرا ومبتتخزنش في البرنامج.",
+                     "AI reading: images are sent to Anthropic to be read and are not stored in this app."),
+    "scan_no_ai": ("القراءة بالذكاء الاصطناعي مش مفعّلة (ANTHROPIC_API_KEY مش موجود في Secrets). هتتستخدم قراءة OCR عادية دقتها أقل.",
+                   "AI reading is off (ANTHROPIC_API_KEY missing in Secrets). Basic OCR will be used, which is less accurate."),
+    "scan_engine_claude": ("تمت القراءة بالذكاء الاصطناعي. راجع البيانات قبل الإنشاء.", "Read with AI. Review the data before creating."),
+    "scan_engine_ocr": ("تمت القراءة بـ OCR عادي (من غير ذكاء اصطناعي). راجع كل حقل قبل الإنشاء.", "Read with basic OCR (no AI). Review every field before creating."),
+    "scan_nid_bad": ("الرقم القومي المقروء مش صحيح فاتشال. صوّر البطاقة تاني بوضوح أو اكتبه.",
+                     "The scanned national ID is invalid and was dropped. Retake the photo or type it."),
+    "scan_not_nid": ("الصورة مش باين إنها بطاقة رقم قومي.", "The image does not look like a national ID card."),
+    "scan_dob_mismatch": ("تاريخ الميلاد على الكارنيه مختلف عن اللي في الرقم القومي. اتعتمد الرقم القومي، راجع.",
+                          "Birth date on the card differs from the national ID. The national ID date was used, please check."),
+    "scan_error": ("خطأ في القراءة: {e}", "Reading error: {e}"),
+    "scan_uncertain": ("راجع الحقول دي (القراءة مش مؤكدة): {fields}", "Please check these fields (uncertain): {fields}"),
+    "scan_nothing": ("مفيش بيانات اتقرأت. ارفع صورة أوضح أو اكتب البيانات.", "Nothing was read. Upload a clearer image or type the data."),
+    "page_error": ("حصل خطأ في الصفحة دي. افتح التفاصيل وابعتها للمطوّر.", "An error occurred on this page. Open the details and send them to the developer."),
+    "details": ("التفاصيل", "Details"),
+    "scan_need_nid": ("الاسم والرقم القومي بيتقروا من البطاقة الشخصية. ارفعها في الخانة الأولى.",
+                      "Name and national ID are read from the ID card. Upload it in the first box."),
+    "scan_upload_hint": ("ارفع صورة البطاقة (والكارنيه) وهتظهر هنا جنب البيانات.", "Upload the ID card (and insurance card) and it will appear here next to the data."),
+    "scan_img_fail": ("تعذر عرض الصورة.", "Could not display the image."),
+    "scan_ocr_limited": ("اسم البطاقة الشخصية بالعربي مبيتقراش بالـ OCR العادي (بيغلط). اكتبه بإيدك أو فعّل ANTHROPIC_API_KEY.",
+                         "The Arabic name on the ID card is not read by basic OCR (unreliable). Type it or enable ANTHROPIC_API_KEY."),
+    "set_scan": ("المسح الذكي", "Smart scanning"),
+    "scan_ai_on": ("القراءة بالذكاء الاصطناعي مفعّلة", "AI reading is enabled"),
+    # أخطاء
+    "err_name": ("الاسم مطلوب", "Name is required"), "err_policy": ("اختر الوثيقة", "Select a policy"),
+    "err_nid": ("الرقم القومي لازم 14 رقم صحيح", "National ID must be a valid 14 digits"),
+    "err_exists": ("العضو موجود بالفعل ونشط في الوثيقة دي", "Member already exists and is active in this policy"),
+    "err_dup_req": ("فيه طلب إضافة مفتوح لنفس العضو", "An open add request already exists for this member"),
+    "err_not_active": ("العضو مش نشط", "Member is not active"),
+    "err_open_exists": ("فيه طلب مفتوح من نفس النوع لنفس العضو", "An open request of this type already exists"),
+    "err_required": ("الموبايل والرقم الوظيفي مطلوبين", "Phone and staff number are required"),
+    "err_transition": ("تعذر تغيير الحالة", "Could not change status"),
+    "err_need_name": ("اختر عمود الاسم الكامل", "Select the full-name column"),
+    # طلبات
+    "req_details": ("تفاصيل الطلب", "Request details"), "choose_req": ("اختر الطلب", "Select request"),
+    "rq_ref": ("المرجع", "Reference"), "rq_type": ("النوع", "Type"), "rq_member": ("العضو", "Member"),
+    "rq_staff": ("الرقم الوظيفي", "Staff no."), "rq_policy": ("الوثيقة", "Policy"), "rq_date": ("تاريخ السريان", "Effective date"),
+    "rq_status": ("الحالة", "Status"), "rq_created": ("تاريخ الإنشاء", "Created"), "rq_by": ("بواسطة", "By"),
+    "ty_add": ("إضافة", "Add"), "ty_delete": ("حذف", "Delete"), "ty_replace": ("بدل فاقد", "Replacement"),
+    "st_draft": ("مسودة", "Draft"), "st_sent": ("مُرسل", "Sent"), "st_review": ("قيد المراجعة", "In review"),
+    "st_done": ("تم التنفيذ", "Done"), "st_rejected": ("مرفوض", "Rejected"), "st_cancelled": ("ملغي", "Cancelled"),
+    "move_to": ("نقل إلى", "Move to"), "no_actions": ("لا توجد انتقالات متاحة لهذه الحالة.", "No transitions available."),
+    "status_changed": ("تم تغيير الحالة", "Status changed"),
+    "done_note_add": ("عند 'تم التنفيذ' العضو هيتفعل تلقائياً.", "On 'Done' the member is activated automatically."),
+    "done_note_delete": ("عند 'تم التنفيذ' العضو هيتحول لـ 'تم إنهاء العضوية'.",
+                         "On 'Done' the member becomes 'Terminated'."),
+    # مسح ذكي
+    "scan_title": ("المسح الذكي", "Smart Scanner"), "upload_card": ("رفع الكارت", "Upload card"),
+    "upload_nid": ("رفع البطاقة", "Upload national ID"), "read": ("قراءة", "Scan"), "add_date": ("تاريخ الإضافة", "Addition date"),
+    "ocr_off": ("القراءة الآلية (OCR) مش متاحة على السيرفر. اكتب البيانات يدوياً.",
+                "OCR is not available on this server. Enter the data manually."),
+    "ocr_done": ("تمت القراءة. راجع البيانات قبل الحفظ.", "Scan complete. Review the data before saving."),
+    "ocr_empty": ("القراءة ملقتش بيانات واضحة. اكتبها يدوياً.", "Nothing readable found. Enter the data manually."),
+    # تصدير
+    "tab_masters": ("ماسترز Allianz", "Allianz masters"), "tab_files": ("ملفات الإضافة والحذف", "Add / Delete files"),
+    "imp_up": ("ارفع شيت Allianz (XLS / XLSX / CSV)", "Upload Allianz sheet (XLS / XLSX / CSV)"),
+    "imp_fail": ("فشل قراءة الملف. جرّب حفظه كـ XLSX.", "Could not read the file. Try saving as XLSX."),
+    "imp_preview": ("معاينة", "Preview"), "imp_map": ("اربط أعمدة الملف بالحقول", "Map file columns to fields"),
+    "imp_skip": ("— تجاهل —", "— skip —"), "imp_go": ("استيراد", "Import"),
+    "imp_count": ("عدد الصفوف الجاهزة للاستيراد: {n}", "Rows ready to import: {n}"),
+    "imp_missing": ("فيه {n} عضو في النظام مش موجودين في الشيت. مش هيتمسحوا.",
+                    "{n} member(s) in the system are not in the sheet. They will not be deleted."),
+    "imp_result": ("جديد: {new} | اتحدّث: {upd} | بدون تغيير: {same}", "New: {new} | Updated: {upd} | Unchanged: {same}"),
+    "imp_dl_master": ("تحميل الماستر الحالي", "Download current master"),
+    "files_none": ("لا توجد طلبات مسودة من النوع ده للوثيقة دي.", "No draft requests of this type for this policy."),
+    "files_pick": ("الطلبات اللي هتدخل الملف", "Requests to include"), "files_dl": ("تحميل الملف", "Download file"),
+    "files_mark_sent": ("تم إرساله لـ Allianz", "Mark as sent to Allianz"),
+    "files_marked": ("تم نقل {n} طلب إلى مُرسل", "{n} request(s) moved to Sent"),
+    # إعدادات / إشعارات
+    "set_notif": ("إشعارات واتساب", "WhatsApp notifications"),
+    "notif_pending": ("في الانتظار", "Pending"), "notif_sent": ("تم الإرسال", "Sent"), "notif_failed": ("فشل", "Failed"),
+    "notif_test": ("إرسال رسالة تجربة", "Send test message"), "notif_test_sent": ("اتسجلت رسالة التجربة في قائمة الانتظار", "Test message queued"),
+    "notif_demo_warn": ("Supabase مش متوصل: الإشعارات بتتسجل مؤقتاً ومش هتوصل للبوت.",
+                        "Supabase not connected: notifications are temporary and won't reach the bot."),
+    "sb_ok": ("Supabase متوصل", "Supabase connected"), "sb_err": ("فشل الاتصال بـ Supabase: {e}", "Supabase connection failed: {e}"),
+}
+
+
+def lang():
+    return "ar" if st.session_state.get("lang_label", "العربية") == "العربية" else "en"
+
+
+def t(key):
+    v = S.get(key)
+    if v is None:
+        return key
+    return v[0] if lang() == "ar" else v[1]
